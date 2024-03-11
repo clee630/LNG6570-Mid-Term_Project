@@ -1,9 +1,7 @@
-// Remove command prefix
-PennController.ResetPrefix(null);
-
-// Turn off debugger
-DebugOff();
-
+PennController.ResetPrefix(null)
+;
+DebugOff()
+;
 // Control trial sequence
 Sequence("instructions", randomize("experimental-trial"), "send", "completion_screen")
 ;
@@ -16,9 +14,9 @@ newTrial("instructions",
     ,
     newText("instructions-1", "Welcome!")
     ,
-    newText("instructions-2", "In this experiment, you will hear a word, and see two images.")
+    newText("instructions-2", "In this experiment, you will hear and read a sentence, and see two images.")
     ,
-    newText("instructions-3", "<b>Select the image that better matches the word:</b>")
+    newText("instructions-3", "<b>Select the image that better matches the sentence:</b>")
     ,
     newText("instructions-4", "Press the <b>F</b> key to select the image on the left.<br>Press the <b>J</b> key to select the image on the right.<br>You can also click on an image to select it.")
     ,
@@ -51,12 +49,8 @@ Template("input.csv", row =>
         newAudio("audio", row.Audio_file)
             .play()
         ,
-        newTimer("timeout", row.duration)
+        newTimer("timeout", row.Duration)
             .start()
-        ,
-        newText("Word", row.Word)
-            .center()
-            .unfold(row.duration)
         ,
         newImage("Image 1", row.Image_file)
             .size(200, 200)
@@ -85,13 +79,13 @@ Template("input.csv", row =>
             .stop()
     )
     .log("group", row.Group)
-    .log("item", row.Word)
     .log("condition", row.Condition)
     .log("ID", getVar("ID"))
 )
 ;
 // Send results manually
-SendResults("send");
+SendResults("send")
+;
 
 // Completion screen
 newTrial("completion_screen",
@@ -101,4 +95,5 @@ newTrial("completion_screen",
     ,
     newButton("wait", "")
         .wait()
-    );
+)
+;
