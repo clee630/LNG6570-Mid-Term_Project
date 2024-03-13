@@ -2,9 +2,13 @@ PennController.ResetPrefix(null)
 ;
 DebugOff()
 ;
+// Define variables to track accuracy
+newVar("totalTrials").global().set(0); // Total number of trials
+newVar("correctResponses").global().set(0); // Total number of correct responses
+
 // Control trial sequence
-Sequence("instructions", randomize("experimental-trial"), "send", "completion_screen")
-;
+Sequence("instructions", randomize("experimental-trial"), "send", "completion_screen", "accuracy_display");
+
 // Instructions
 newTrial("instructions",
     defaultText
@@ -37,8 +41,8 @@ newTrial("instructions",
     newVar("ID")
         .global()
         .set(getTextInput("input_ID"))
-)
-;
+);
+
 // Experimental trial
 Template("input.csv", row =>
     newTrial("experimental-trial",
@@ -62,11 +66,21 @@ Template("input.csv", row =>
             .print()
             .log()
         ,
+        newVar("correctResponse")
+            .global()
+            .set(row.Image_file) // Use Image_file as the correct response
+        ,
         newSelector("selection")
             .add(getImage("Image 1"), getImage("Image 2"))
             .shuffle()
             .keys("F", "J")
             .log()
+            .test.selected(getVar("correctResponse")) // Test if participant's response matches the correct response
+            .success(
+                getVar("correctResponses").set(v => v + 1) // Increment correct response count
+            )
+        ,
+        getVar("totalTrials").set(v => v + 1) // Increment total trial count
         ,
         newTimer("timeout", row.Duration)
             .start()
@@ -75,14 +89,12 @@ Template("input.csv", row =>
         getAudio("audio")
             .wait("first")
     )
-    .log("group", row.Group)
-    .log("condition", row.Condition)
+    .log("condition", row.Group)
     .log("ID", getVar("ID"))
-)
-;
+);
+
 // Send results manually
-SendResults("send")
-;
+SendResults("send");
 
 // Completion screen
 newTrial("completion_screen",
@@ -92,5 +104,13 @@ newTrial("completion_screen",
     ,
     newButton("wait", "")
         .wait()
-)
-;
+);
+
+// Display accuracy
+newTrial("accuracy_display",
+    newText("accuracyText", "Accuracy: ")
+        .print()
+    ,
+    newText("accuracyValue", getVar("correctResponses").value / getVar("totalTrials").value * 100 + "%")
+        .print()
+);
