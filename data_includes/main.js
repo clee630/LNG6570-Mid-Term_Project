@@ -42,15 +42,12 @@ newTrial("instructions",
 // Experimental trial
 Template("input.csv", row =>
     newTrial("experimental-trial",
-        newTimer("break", 1000)
-            .start()
-            .wait()
-        ,
         newAudio("audio", row.Audio_file)
             .play()
         ,
-        newTimer("timeout", row.Duration)
+        newTimer("audioDelay", 500) // Add a delay of 500 ms after playing audio
             .start()
+            .wait()
         ,
         newImage("Image 1", row.Image_file)
             .size(200, 200)
@@ -70,13 +67,13 @@ Template("input.csv", row =>
             .shuffle()
             .keys("F", "J")
             .log()
-            .callback(getTimer("timeout").stop())
         ,
-        getTimer("timeout")
+        newTimer("timeout", row.Duration)
+            .start()
             .wait()
         ,
         getAudio("audio")
-            .stop()
+            .wait("first")
     )
     .log("group", row.Group)
     .log("condition", row.Condition)
