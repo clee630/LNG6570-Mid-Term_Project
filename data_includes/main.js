@@ -1,10 +1,8 @@
 PennController.ResetPrefix(null);
 DebugOff();
 
-// Control trial sequence
 Sequence("instructions", randomize("experimental-trial"), "send", "completion_screen");
 
-// Instructions
 newTrial("instructions",
     defaultText
         .cssContainer({"margin-bottom":"1em"})
@@ -39,62 +37,51 @@ Template("input.csv", row =>
             .size(200, 200),
         newImage("Image 2", row.Image_file2)
             .size(200, 200),
+        newVar("accuracy") // Create a new variable for accuracy
+            .settings.global(), // Make it global
+        newVar("reaction_time") // Create a new variable for reaction time
+            .settings.global() // Make it global
+            .set(v => Date.now()), // Set it to the current time
         newCanvas("side-by-side", 450, 200)
             .add(0, 0, getImage("Image 1"))
             .add(250, 0, getImage("Image 2"))
             .center()
             .print()
             .log(),
-        newVar("RT")  // Create a new variable for reaction time
-            .settings.global() // Make it global
-            .set(0), // Initialize reaction time variable
-        newVar("Accuracy")
-            .global()
-            .set(0), // Initialize accuracy variable
         newSelector("selection")
             .add(getImage("Image 1"), getImage("Image 2"))
             .shuffle()
             .keys("F", "J")
             .log()
             .wait(), // Wait for response
+        getVar("reaction_time")
+            .set(v => Date.now() - v), // Calculate reaction time
         newTimer("timeout", row.Duration)
             .start()
             .wait(),
         getAudio("audio")
             .wait("first"),
-        getVar("RT")
-            .set(v => Date.now()), // Set initial reaction time
-        newVar("CorrectResponse")
-            .set(row.Image_file), // Set correct response
+        // Set accuracy based on selection
         getSelector("selection")
-            .test.selected()
-            .success(
-                getVar("Accuracy").set(1) // Set accuracy to 1 if correct
-            )
-            .failure(
-                getVar("Accuracy").set(0) // Set accuracy to 0 if incorrect
-            )
-            .log(), // Log the accuracy
-        getVar("RT")
-            .set(v => Date.now() - v), // Calculate the reaction time
+            .test.selected(getImage("Image 1")) // Check if Image 1 is selected
+            .success(getVar("accuracy").set(1)) // Set accuracy to 1 if correct
+            .failure(getVar("accuracy").set(0)) // Set accuracy to 0 if incorrect
     )
-    .log("group", row.Group)
     .log("ID", getVar("ID"))
-    .log("RT", getVar("RT")) // Log the reaction time
-    .log("Accuracy", getVar("Accuracy")) // Log the accuracy
-    .log("CorrectResponse", getVar("CorrectResponse")) // Log the correct response
+    .log("Condition", row.Group)
+    .log("accuracy", getVar("accuracy"))
+    .log("reaction_time", getVar("reaction_time"))
 );
 
 
-
-// Send results manually
 SendResults("send");
 
-// Completion screen
 newTrial("completion_screen",
     newText("thanks", "Thank you for participating! You may now exit the window.")
         .center()
-        .print(),
+        .print()
+    ,
     newButton("wait", "")
         .wait()
-);
+)
+;
