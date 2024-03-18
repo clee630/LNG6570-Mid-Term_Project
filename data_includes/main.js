@@ -35,9 +35,9 @@ Template("input.csv", row =>
         newTimer("audioDelay", 500) // Add a delay of 500 ms after playing audio
             .start()
             .wait(),
-        newImage("Image 1", row.Image_file) // Use consistent naming convention
+        newImage("Image 1", row.Image_file)
             .size(200, 200),
-        newImage("Image 2", row.Image_file2) // Use consistent naming convention
+        newImage("Image 2", row.Image_file2)
             .size(200, 200),
         newCanvas("side-by-side", 450, 200)
             .add(0, 0, getImage("Image 1"))
