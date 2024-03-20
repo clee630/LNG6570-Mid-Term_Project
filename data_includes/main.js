@@ -68,11 +68,13 @@ Template("input.csv", row =>
             .failure(getVar("accuracy").set(0)) // Set accuracy to 0 if incorrect
     )
     .log("ID", getVar("ID"))
-    .log("Condition", row.Group)
+    .log("Condition", row.Condition)
+    .log("Group", row.Group)
+    .log("Image 1", row.Image_file)
+    .log("Image 2", row.Image_file2)
     .log("accuracy", getVar("accuracy"))
     .log("reaction_time", getVar("reaction_time"))
 );
-
 
 SendResults("send");
 
