@@ -1,4 +1,4 @@
-﻿Word,Audio_file,Image_file,Condition,Image_file2,Duration,Group,Correct_response,Item
+﻿Word,Audio_file,Image_file,Group,Image_file2,Duration,Condition,Correct_response,Item
 Livre,Stimuli_1.mp3,Stimuli_1.png,imaginable,Stimuli_1_2.png,2000,B,Image_file,1a
 Bébé,Stimuli_2.mp3,Stimuli_2.png,imaginable,Stimuli_2_2.png,2000,B,Image_file,1b
 Jeu,Stimuli_3.mp3,Stimuli_3.png,imaginable,Stimuli_3_2.png,2000,B,Image_file,1c
